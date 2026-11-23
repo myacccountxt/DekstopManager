@@ -65,6 +65,33 @@ Masukkan alamat server pada halaman login, misalnya `http://192.168.1.10:3000` u
 npm.cmd run electron:build
 ```
 
+## Deploy API ke Railway
+
+Railway meng-host API dan PostgreSQL; aplikasi Electron tetap dijalankan pada komputer pengguna sebagai client. Jangan unggah `.env` atau memasukkan rahasianya ke Git.
+
+1. Buat project Railway dan deploy repository ini dari GitHub. `railway.json` memilih `server/Dockerfile` dan pemeriksaan kesehatan `/api/health`.
+2. Tambahkan database PostgreSQL pada project. Pada service API, tambahkan variable:
+   - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (sesuaikan `Postgres` dengan nama service database).
+   - `EARSIP_STORAGE_PATH` = `/data/files`.
+   - `EARSIP_TRUST_PROXY` = `true`.
+   - `EARSIP_ADMIN_USERNAME` = username admin pilihan Anda.
+   - `EARSIP_ADMIN_PASSWORD` = password unik dan kuat (minimal 8 karakter).
+   - `EARSIP_ORGANIZATION_NAME` = nama instansi Anda.
+3. Hubungkan PostgreSQL dengan API melalui variable reference `DATABASE_URL`; jangan salin connection string ke Git atau chat.
+4. Tambahkan volume pada service API dengan mount path `/data/files`. Volume ini diperlukan agar lampiran tetap ada setelah deployment/restart.
+5. Generate domain publik untuk service API. Railway menyediakan HTTPS; gunakan domain tersebut sebagai alamat server pada client.
+6. Setelah database dan variable siap, jalankan bootstrap admin **satu kali** dari root repository menggunakan Railway CLI yang terhubung ke environment dan service API:
+
+   ```powershell
+   npm.cmd install --prefix server
+   railway run --service <nama-service-api> npm.cmd --prefix server run bootstrap-admin
+   ```
+
+   Jangan jalankan ulang setelah admin berhasil dibuat. Buat akun lain melalui kode undangan yang dibuat admin.
+7. Verifikasi `https://<domain-railway>/api/health` mengembalikan `{"status":"ok"}`, lalu masukkan `https://<domain-railway>` pada halaman login aplikasi desktop.
+
+Tambahkan backup PostgreSQL dan volume secara berkala. Batas ukuran unggah default adalah 1 GiB; sesuaikan `EARSIP_MAX_FILE_SIZE` jika perlu dan perhatikan batas ukuran request pada platform.
+
 Untuk akses LAN, izinkan koneksi masuk ke port server pada firewall Windows dan pastikan komputer client berada pada jaringan yang dapat menjangkaunya. Aplikasi menolak HTTP untuk alamat publik. Pengguna internet harus mengakses server melalui reverse proxy yang menyediakan HTTPS; jangan mempublikasikan port API tanpa TLS. Jika reverse proxy berjalan di host yang sama, atur `EARSIP_BIND_ADDRESS=127.0.0.1`; jika memakai satu reverse proxy, atur `EARSIP_TRUST_PROXY=true` agar pembatasan percobaan login memakai alamat client yang diteruskan proxy. HTTP hanya layak untuk jaringan lokal tepercaya.
 
 ## Data dan Operasional
