@@ -1,0 +1,47 @@
+services:
+  database:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: earsip
+      POSTGRES_USER: earsip
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U earsip -d earsip"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      PGHOST: database
+      PGPORT: 5432
+      PGDATABASE: earsip
+      PGUSER: earsip
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      EARSIP_STORAGE_PATH: /data/files
+      EARSIP_MAX_FILE_SIZE: ${EARSIP_MAX_FILE_SIZE:-1073741824}
+      EARSIP_TRUST_PROXY: ${EARSIP_TRUST_PROXY:-false}
+      EARSIP_ADMIN_USERNAME: ${EARSIP_ADMIN_USERNAME:?Set EARSIP_ADMIN_USERNAME in .env}
+      EARSIP_ADMIN_PASSWORD: ${EARSIP_ADMIN_PASSWORD:?Set EARSIP_ADMIN_PASSWORD in .env}
+      EARSIP_ORGANIZATION_NAME: ${EARSIP_ORGANIZATION_NAME:-E-Arsip Instansi}
+    ports:
+      - "${EARSIP_BIND_ADDRESS:-0.0.0.0}:${EARSIP_PORT:-3000}:3000"
+    volumes:
+      - document-files:/data/files
+    depends_on:
+      database:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  document-files:

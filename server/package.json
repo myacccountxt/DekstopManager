@@ -1,0 +1,21 @@
+{
+  "name": "e-arsip-instansi-server",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "bootstrap-admin": "node cli.js bootstrap-admin",
+    "invite": "node cli.js invite"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "multer": "^2.0.2",
+    "pg": "^8.16.3"
+  }
+}

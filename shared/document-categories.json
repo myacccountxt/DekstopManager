@@ -1,0 +1,38 @@
+[
+  {
+    "group": "Perencanaan dan Penganggaran",
+    "items": [
+      "Rencana Strategis (Renstra)",
+      "Rencana Kerja (Renja)",
+      "Anggaran",
+      "Rencana Kinerja Tahunan (RKT)",
+      "Perjanjian Kinerja Tahunan",
+      "Rencana Aksi",
+      "Pohon Kinerja",
+      "Cascading"
+    ]
+  },
+  {
+    "group": "Pengukuran dan Pelaporan",
+    "items": [
+      "Pengukuran Kinerja",
+      "Pelaporan Kinerja",
+      "Capaian Kinerja",
+      "Indikator Kinerja Utama (IKU)",
+      "LKjIP"
+    ]
+  },
+  {
+    "group": "Evaluasi dan Tindak Lanjut",
+    "items": [
+      "Evaluasi Internal",
+      "Tindak Lanjut Rekomendasi Hasil Evaluasi (AKIP) Tahunan"
+    ]
+  },
+  {
+    "group": "Dokumen Pendukung",
+    "items": [
+      "Dokumen Dukung Lainnya"
+    ]
+  }
+]

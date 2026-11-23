@@ -1,0 +1,9 @@
+node_modules
+server/node_modules
+dist
+release
+release-latest
+.git
+.env
+server-data
+*.db

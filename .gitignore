@@ -1,0 +1,10 @@
+node_modules/
+dist/
+release/
+E-Arsip-Instansi-Portable.exe
+.vite/
+.DS_Store
+npm-debug.log*
+.env
+.env.*
+!.env.example

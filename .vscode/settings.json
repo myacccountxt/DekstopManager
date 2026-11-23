@@ -1,0 +1,4 @@
+{
+    "chat.agent.sandbox.enabledWindows": "on",
+    "chat.planAgent.defaultModel": "Auto (copilot)"
+}
