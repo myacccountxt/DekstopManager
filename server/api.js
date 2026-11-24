@@ -757,6 +757,40 @@ async function bootstrapAdmin() {
   }
 }
 
+async function resetAdminPassword() {
+  const username = String(process.env.EARSIP_ADMIN_USERNAME || '').trim();
+  const password = process.env.EARSIP_ADMIN_RESET_PASSWORD;
+  if (!/^[a-zA-Z0-9._-]{3,32}$/.test(username) ||
+    typeof password !== 'string' || password.length < 8 || password.length > 256) {
+    throw new Error('Atur EARSIP_ADMIN_USERNAME dan EARSIP_ADMIN_RESET_PASSWORD (8-256 karakter) sebelum reset.');
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await client.query(
+      'SELECT id FROM users WHERE lower(username) = lower($1) AND role = $2 FOR UPDATE',
+      [username, 'admin'],
+    );
+    if (result.rowCount !== 1) {
+      throw new Error(result.rowCount ? 'Username cocok dengan lebih dari satu admin; reset dibatalkan.' : 'Admin dengan username tersebut tidak ditemukan; reset dibatalkan.');
+    }
+
+    const userId = result.rows[0].id;
+    await client.query(
+      'UPDATE users SET password_hash = $1, recovery_code_hash = NULL WHERE id = $2',
+      [await createPasswordHash(password), userId],
+    );
+    await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
+    await client.query('COMMIT');
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 function startServer() {
   const port = Number(process.env.PORT || 3000);
   const host = process.env.HOST || '0.0.0.0';
@@ -765,4 +799,4 @@ function startServer() {
   }));
 }
 
-module.exports = { bootstrapAdmin, createApp, createInvitation, initializeDatabase, pool, startServer };
+module.exports = { bootstrapAdmin, createApp, createInvitation, initializeDatabase, pool, resetAdminPassword, startServer };

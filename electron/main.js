@@ -10,7 +10,7 @@ const { pipeline } = require('stream/promises');
 const { normalizeServerUrl } = require('../shared/server-url');
 
 let mainWindow;
-let serverUrl = process.env.EARSIP_API_URL || 'http://127.0.0.1:3000';
+let serverUrl = process.env.EARSIP_API_URL || 'https://dekstopmanager-production-93ce332c.up.railway.app';
 let accessToken = null;
 const eventStreams = new Map();
 

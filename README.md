@@ -59,7 +59,7 @@ npm.cmd install
 npm.cmd run dev
 ```
 
-Masukkan alamat server pada halaman login, misalnya `http://192.168.1.10:3000` untuk server LAN atau `https://arsip.example.go.id` untuk server internet. Alamat server diingat pada komputer tersebut. Buat installer client dengan:
+Client menggunakan server Railway `https://dekstopmanager-production-93ce332c.up.railway.app` secara default, jadi komputer pengguna tidak perlu menjalankan Docker atau PostgreSQL. Untuk memakai server lain saat menjalankan client, atur variabel `EARSIP_API_URL`. Buat installer client dengan:
 
 ```powershell
 npm.cmd run electron:build
@@ -89,6 +89,17 @@ Railway meng-host API dan PostgreSQL; aplikasi Electron tetap dijalankan pada ko
 
    Jangan jalankan ulang setelah admin berhasil dibuat. Buat akun lain melalui kode undangan yang dibuat admin.
 7. Verifikasi `https://<domain-railway>/api/health` mengembalikan `{"status":"ok"}`, lalu masukkan `https://<domain-railway>` pada halaman login aplikasi desktop.
+
+### Reset password admin yang terkunci
+
+Jika password lama dan kode pemulihan tidak tersedia, atur variable `EARSIP_ADMIN_RESET_PASSWORD` sementara pada environment Railway yang sama. Jalankan perintah berikut dari root repository menggunakan Railway CLI yang terhubung ke service API:
+
+```powershell
+npm.cmd install --prefix server
+railway run --service <nama-service-api> npm.cmd --prefix server run reset-admin-password
+```
+
+Perintah ini mereset hanya satu akun admin yang username-nya cocok dengan `EARSIP_ADMIN_USERNAME`, menghapus kode pemulihannya, dan mencabut semua sesi aktif. Jika tidak ada kecocokan atau ada lebih dari satu, perintah membatalkan reset. Setelah berhasil, hapus `EARSIP_ADMIN_RESET_PASSWORD` dari variable Railway. Jangan jalankan bootstrap-admin untuk mereset password.
 
 Tambahkan backup PostgreSQL dan volume secara berkala. Batas ukuran unggah default adalah 1 GiB; sesuaikan `EARSIP_MAX_FILE_SIZE` jika perlu dan perhatikan batas ukuran request pada platform.
 

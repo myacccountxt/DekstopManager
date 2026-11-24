@@ -10,8 +10,7 @@ export default function LoginPage({ onLogin, onForgotPassword, onRegister, onDis
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const serverUrl = localStorage.getItem('earsip.serverUrl');
-    onLogin({ ...form, ...(serverUrl ? { serverUrl } : {}) });
+    onLogin(form);
   };
 
   return (

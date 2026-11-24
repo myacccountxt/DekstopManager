@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node index.js",
     "bootstrap-admin": "node cli.js bootstrap-admin",
+    "reset-admin-password": "node cli.js reset-admin-password",
     "invite": "node cli.js invite"
   },
   "dependencies": {
